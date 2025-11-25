@@ -1801,6 +1801,13 @@ class Ernie4_5_LMHead(nn.Layer):
         #  will enter this branch when:
         # 1. use_recompute_loss_fn or use_sparse_head_and_loss_fn
         # 2. dpo training
+
+        import os
+        if (os.getenv("TP_LOG", "0") == "1"):
+            print("self.weight", self.weight)
+            import sys
+            sys.exit()
+
         if self.config.use_recompute_loss_fn or self.config.use_sparse_head_and_loss_fn:
             return (
                 hidden_states,

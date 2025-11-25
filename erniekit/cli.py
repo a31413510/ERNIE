@@ -184,11 +184,25 @@ def main():
         args_to_pass = " ".join(shlex.quote(arg) for arg in sys.argv[1:])
         if current_device == "iluvatar_gpu":
             current_device = "gpu"
-        command = (
-            f"python -u -m paddle.distributed.launch --log_dir {erniekit_dist_log} "
-            f"--{current_device}s {visible_cards} --master {master_ip}:{master_port} "
-            f"--nnodes {nnodes} {launcher.__file__} {args_to_pass}"
-        )
+        # print("zxc111 ENABLE_AUTO_TUNER", os.getenv("ENABLE_AUTO_TUNER", "0"))
+        # sys.exit()
+        if (os.getenv("ENABLE_AUTO_TUNER", "0") == "1"):
+            # import sys
+            # print("zxc11111111111111")
+            # sys.exit()
+            command = (
+                f"python -u -m paddle.distributed.launch --auto_tuner_json ernie_21b.json --log_dir {erniekit_dist_log} "
+                f"--{current_device}s {visible_cards} --master {master_ip}:{master_port} "
+                f"--nnodes {nnodes} {launcher.__file__} {args_to_pass}"
+            )
+        else:
+            # print("zxc000000000")
+            # sys.exit()
+            command = (
+                f"python -u -m paddle.distributed.launch --log_dir {erniekit_dist_log} "
+                f"--{current_device}s {visible_cards} --master {master_ip}:{master_port} "
+                f"--nnodes {nnodes} {launcher.__file__} {args_to_pass}"
+            )
         command = shlex.split(command)
         process = subprocess.Popen(
             command,
